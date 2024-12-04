@@ -4,7 +4,7 @@ ini_set('display_errors', 0); // Tắt hiển thị lỗi
 ini_set('display_startup_errors', 0); // Tắt hiển thị lỗi khởi động
 error_reporting(0); // Tắt toàn bộ thông báo lỗi
 // URL cần crawl
-$url = "http://mp3.zing.vn/xhr/chart-realtime?songId=0&videoId=0&albumId=0&chart=song&time=-1";
+$url = "https://mp3.zing.vn/xhr/media/get-info?type=".$_GET['type']."&id=". $_GET['id'];
 
 // Khởi tạo cURL
 $ch = curl_init();
@@ -38,22 +38,18 @@ $data = json_decode($response, true, 512, JSON_UNESCAPED_UNICODE);
 // Kiểm tra nếu dữ liệu hợp lệ
 $songData = array();
 
-if ($data['err'] === 0 && isset($data['data']['song'])) {
-    $songs = $data['data']['song'];
-    foreach ($songs as $song) {
-		if (isset($song['album']))
-			$songData[] = array(
-				'id' => $song['album']['id'],
-				'name' => $song['album']['name'],
-				'artists' => $song['album']['artists'],
-				'image' => $song['album']['thumbnail'],
-				'type' => 'album',
-				'key' => $song['code'],
-				'duration' => gmdate("i:s", $song['duration']),
-				'type' => 'album'
-			);
+if ($data['err'] === 0 && isset($data['data']['source'])) {
+    $song = $data['data'];
+	$songData = array(
+		'id' => $song['id'],
+		'url' => $song['source']['128'],
+		'artists' => $song['artists_names'],
+		'title' => $song['title'],
+		'playlist_id' => $song['playlist_id'],
+		'image' => $song['thumbnail'],
+		'type' => 'song_details'
+	);
        
-    }
 	 echo json_encode(array(
 		'errorCode' => 200,
 		'message' => 'Thành công',
