@@ -43,7 +43,8 @@ if ($data['err'] === 0 && isset($data['data']['song'])) {
 			'id' => $song['id'],
 			'name' => $song['name'],
 			'artist' => $song['artists_names'],
-			'duration' => gmdate("i:s", $song['duration'])
+			'duration' => gmdate("i:s", $song['duration']),
+			'image' => $song['thumbnail']
 		);
        
     }
