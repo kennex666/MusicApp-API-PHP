@@ -1,8 +1,11 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
+ini_set('display_errors', 0); // Tắt hiển thị lỗi
+ini_set('display_startup_errors', 0); // Tắt hiển thị lỗi khởi động
+error_reporting(0); // Tắt toàn bộ thông báo lỗi
 
 // URL cần crawl
-$url = "http://mp3.zing.vn/xhr/chart-realtime?songId=0&videoId=0&albumId=0&chart=song&time=-1";
+$url = "http://mp3.zing.vn/xhr/chart-realtime?songId=0&videoId=0&albumId=0&chart=song&time=".$_GET['time'];
 
 // Khởi tạo cURL
 $ch = curl_init();
@@ -33,6 +36,7 @@ curl_close($ch);
 $data = json_decode($response, true, 512, JSON_UNESCAPED_UNICODE);
 
 
+
 // Kiểm tra nếu dữ liệu hợp lệ
 $songData = array();
 
@@ -44,7 +48,9 @@ if ($data['err'] === 0 && isset($data['data']['song'])) {
 			'name' => $song['name'],
 			'artist' => $song['artists_names'],
 			'duration' => gmdate("i:s", $song['duration']),
-			'image' => $song['thumbnail']
+			'image' => $song['thumbnail'],
+			'key' => $song['code'],
+			'type' => 'song'
 		);
        
     }
