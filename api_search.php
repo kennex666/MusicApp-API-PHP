@@ -4,7 +4,7 @@ ini_set('display_errors', 0); // Tắt hiển thị lỗi
 ini_set('display_startup_errors', 0); // Tắt hiển thị lỗi khởi động
 error_reporting(0); // Tắt toàn bộ thông báo lỗi
 // URL cần crawl
-$url = "https://mp3.zing.vn/xhr/media/get-source?type=audio&key=". $_GET['code'];
+$url = "http://ac.mp3.zing.vn/complete?type=song&num=500&query=". urlencode($_GET['q']);
 
 // Khởi tạo cURL
 $ch = curl_init();
@@ -38,18 +38,19 @@ $data = json_decode($response, true, 512, JSON_UNESCAPED_UNICODE);
 // Kiểm tra nếu dữ liệu hợp lệ
 $songData = array();
 
-if ($data['err'] === 0 && isset($data['data']['source'])) {
-    $song = $data['data'];
-	$songData = array(
-		'id' => $song['id'],
-		'url' => $song['source']['128'],
-		'artists' => $song['artists_names'],
-		'title' => $song['title'],
-		'playlist_id' => $song['playlist_id'],
-		'image' => $song['thumbnail'],
-		'type' => 'song_details'
-	);
+if ($data['result'] == true && isset($data['data'][0]['song'])) {
+    $songs = $data['data'][0]['song'];
+    foreach ($songs as $song) {
+		$songData[] = array(
+			'id' => $song['id'],
+			'name' => $song['name'],
+			'artist' => $song['artist'],
+			'image' => 'https://photo-resize-zmp3.zmdcdn.me/'.$song['thumb'],
+			'key' => $song['code'],
+			'type' => 'song'
+		);
        
+    }
 	 echo json_encode(array(
 		'errorCode' => 200,
 		'message' => 'Thành công',
